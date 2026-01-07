@@ -20,8 +20,8 @@ EXPECTED_SECTIONS = [
     ("###", "What happened today"),
     ("###", "What I'm grateful for"),
     ("###", "What I'm looking forward to"),
-    ("##", "Signals"),
-    ("##", "One adjustment (tomorrow)"),
+    ("###", "Signals"),
+    ("###", "One adjustment (tomorrow)"),
     ("###", "Final score (1/5)"),
 ]
 
