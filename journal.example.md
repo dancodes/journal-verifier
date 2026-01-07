@@ -15,11 +15,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -44,11 +44,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -73,11 +73,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -102,11 +102,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -131,11 +131,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -160,11 +160,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -189,11 +189,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -218,11 +218,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -247,11 +247,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -276,11 +276,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -305,11 +305,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -334,11 +334,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -363,11 +363,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -392,11 +392,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -421,11 +421,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -450,11 +450,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -479,11 +479,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -508,11 +508,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -537,11 +537,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -566,11 +566,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -595,11 +595,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -624,11 +624,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -653,11 +653,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -682,11 +682,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -711,11 +711,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -740,11 +740,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -769,11 +769,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -798,11 +798,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -827,11 +827,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -856,11 +856,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -885,11 +885,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
@@ -914,11 +914,11 @@
 - Short-term: 
 - Long-term: 
 
-## Signals
+### Signals
 - ⬆️ Helped today:
 - ⬇️ Hurt today:
 
-## One adjustment (tomorrow)
+### One adjustment (tomorrow)
 - 
 
 ### Final score (1/5)
