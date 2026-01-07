@@ -35,7 +35,9 @@ def _write_lines(lines: list[str], path_value: str | None, default_stream) -> No
             stream.close()
 
 
-def _write_csv_output(entries, path_value: str) -> None:
+def _write_csv_output(entries, path_value: str | None) -> None:
+    if path_value is None:
+        return
     stream, should_close = _open_output(path_value, sys.stdout)
     try:
         write_csv(entries, stream)
@@ -59,8 +61,8 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("path", help="Path to journal markdown file")
     parser.add_argument(
         "--csv",
-        default="-",
-        help="CSV output path (default: stdout; use '-' for stdout)",
+        default=None,
+        help="CSV output path (default: disabled; use '-' for stdout)",
     )
     parser.add_argument(
         "--report",

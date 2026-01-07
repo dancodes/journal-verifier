@@ -5,11 +5,11 @@ Validate a journal markdown file that follows a fixed daily template. The tool c
 - missing or out-of-order sections
 - missing dates (full year by default)
 - weekday name mismatches
-- available sections per day (CSV output)
+- available sections per day (CSV output when requested)
 
 ## Usage
 
-Run with uv (CSV goes to stdout, report to stderr by default):
+Run with uv (report goes to stderr by default; CSV is disabled unless requested):
 
 ```bash
 uv run journal-verifier path/to/journal.md
