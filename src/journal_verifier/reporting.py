@@ -21,44 +21,18 @@ def _format_missing_dates(dates: list[date], limit: int) -> str:
     return f"{visible} (+{remaining} more)"
 
 
-def _collect_errors(
-    entries: list[Entry],
-    global_errors: list[tuple[int, str]],
-) -> list[tuple[int, str]]:
-    all_errors = list(global_errors)
-    for entry in entries:
-        all_errors.extend(entry.errors)
-    return all_errors
+def _sorted_problems(problems: list[Problem]) -> list[Problem]:
+    return sorted(problems, key=lambda item: (item.line_no is None, item.line_no or 0))
 
 
-def _collect_problems(entries: list[Entry]) -> list[Problem]:
-    problems: list[Problem] = []
-    for entry in entries:
-        problems.extend(entry.problems)
-    return problems
-
-
-def _problem_items(problems: list[Problem]) -> list[tuple[int, str]]:
-    items: list[tuple[int, str]] = []
-    for problem in problems:
-        line_no = problem.line_no or 0
-        items.append((line_no, problem.message))
-    return items
-
-
-def _syntax_report_lines(
-    all_errors: list[tuple[int, str]],
-    problems: list[Problem],
-) -> list[str]:
-    items = list(all_errors)
-    items.extend(_problem_items(problems))
-    if not items:
+def _syntax_report_lines(problems: list[Problem]) -> list[str]:
+    if not problems:
         return ["Syntax errors: none"]
 
     report_lines = ["Syntax errors:"]
-    for line_no, message in sorted(items, key=lambda item: (item[0] == 0, item[0])):
-        prefix = f"- line {line_no}: " if line_no else "- "
-        report_lines.append(f"{prefix}{message}")
+    for problem in _sorted_problems(problems):
+        label = f"- line {problem.line_no}: " if problem.line_no else "- "
+        report_lines.append(f"{label}{problem.message}")
     return report_lines
 
 
@@ -93,7 +67,7 @@ def _weekday_report_lines(mismatches: list[tuple[Entry, str]]) -> list[str]:
 
 def _solution_report_lines(problems: list[Problem]) -> list[str]:
     hints = []
-    for problem in problems:
+    for problem in _sorted_problems(problems):
         hint = solution_hint(problem)
         if hint:
             label = f"- line {problem.line_no}: " if problem.line_no else "- "
@@ -104,19 +78,18 @@ def _solution_report_lines(problems: list[Problem]) -> list[str]:
 
 
 def build_report(
-    entries: list[Entry],
-    global_errors: list[tuple[int, str]],
+    structural_problems: list[Problem],
+    coverage_problems: list[Problem],
     missing_dates: dict[str, list[date]],
     mismatches: list[tuple[Entry, str]],
     missing_limit: int,
 ) -> list[str]:
-    all_errors = _collect_errors(entries, global_errors)
-    problems = _collect_problems(entries)
+    all_problems = list(structural_problems) + list(coverage_problems)
     report_lines: list[str] = []
-    report_lines.extend(_syntax_report_lines(all_errors, problems))
+    report_lines.extend(_syntax_report_lines(structural_problems))
     report_lines.extend(_missing_report_lines(missing_dates, missing_limit))
     report_lines.extend(_weekday_report_lines(mismatches))
-    report_lines.extend(_solution_report_lines(problems))
+    report_lines.extend(_solution_report_lines(all_problems))
     return report_lines
 
 

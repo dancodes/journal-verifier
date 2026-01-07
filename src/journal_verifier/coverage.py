@@ -6,6 +6,7 @@ from datetime import date, timedelta
 from typing import Iterable
 
 from .models import Entry
+from .problems import Problem, ProblemCode
 
 
 def _iter_dates(start: date, end: date) -> Iterable[date]:
@@ -26,6 +27,23 @@ def find_weekday_mismatches(entries: list[Entry]) -> list[tuple[Entry, str]]:
         if entry.weekday_name.lower() != actual.lower():
             mismatches.append((entry, actual))
     return mismatches
+
+
+def _weekday_mismatch_problem(entry: Entry, actual: str) -> Problem:
+    return Problem(
+        code=ProblemCode.WEEKDAY_MISMATCH,
+        message=f"weekday mismatch: header '{entry.weekday_header}' vs actual '{actual}'",
+        line_no=entry.line_no,
+        context={
+            "date": entry.date_str,
+            "weekday_header": entry.weekday_header,
+            "actual": actual,
+        },
+    )
+
+
+def weekday_mismatch_problems(mismatches: list[tuple[Entry, str]]) -> list[Problem]:
+    return [_weekday_mismatch_problem(entry, actual) for entry, actual in mismatches]
 
 
 def _missing_for_range(dates: set[date], start: date, end: date) -> dict[str, list[date]]:
@@ -54,3 +72,25 @@ def find_missing_dates(
     if start and end:
         return _missing_for_range(dates, start, end)
     return _missing_for_years(dates)
+
+
+def _missing_date_problem(day: date, label: str) -> Problem:
+    date_str = day.isoformat()
+    return Problem(
+        code=ProblemCode.MISSING_DATE,
+        message=f"missing date {date_str}",
+        line_no=None,
+        context={
+            "date": date_str,
+            "range": label,
+        },
+    )
+
+
+def missing_date_problems(missing_dates: dict[str, list[date]], limit: int) -> list[Problem]:
+    problems: list[Problem] = []
+    for label, dates in missing_dates.items():
+        selected = dates if limit == 0 else dates[:limit]
+        for day in selected:
+            problems.append(_missing_date_problem(day, label))
+    return problems

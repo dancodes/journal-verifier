@@ -23,6 +23,8 @@ class ProblemCode:
     INVALID_SCORE = "invalid_score"
     SCORE_OUT_OF_RANGE = "score_out_of_range"
     NO_HEADERS = "no_day_headers"
+    MISSING_DATE = "missing_date"
+    WEEKDAY_MISMATCH = "weekday_mismatch"
 
 
 ALL_PROBLEM_CODES = [
@@ -43,7 +45,34 @@ ALL_PROBLEM_CODES = [
     ProblemCode.INVALID_SCORE,
     ProblemCode.SCORE_OUT_OF_RANGE,
     ProblemCode.NO_HEADERS,
+    ProblemCode.MISSING_DATE,
+    ProblemCode.WEEKDAY_MISMATCH,
 ]
+
+STRUCTURAL_CODES = {
+    ProblemCode.MISSING_SECTION,
+    ProblemCode.UNEXPECTED_HEADING,
+    ProblemCode.HEADING_LEVEL,
+    ProblemCode.DUPLICATE_HEADING,
+    ProblemCode.HEADING_ORDER,
+    ProblemCode.INVALID_DATE,
+    ProblemCode.INVALID_WEEKDAY,
+    ProblemCode.DUPLICATE_DATE,
+    ProblemCode.MISSING_BULLET,
+    ProblemCode.MISSING_SHORT_TERM,
+    ProblemCode.MISSING_LONG_TERM,
+    ProblemCode.MISSING_HELPED,
+    ProblemCode.MISSING_HURT,
+    ProblemCode.MISSING_SCORE,
+    ProblemCode.INVALID_SCORE,
+    ProblemCode.SCORE_OUT_OF_RANGE,
+    ProblemCode.NO_HEADERS,
+}
+
+COVERAGE_CODES = {
+    ProblemCode.MISSING_DATE,
+    ProblemCode.WEEKDAY_MISMATCH,
+}
 
 
 @dataclass(frozen=True)

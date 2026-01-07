@@ -27,6 +27,12 @@ Limit the date range check:
 uv run journal-verifier path/to/journal.md --start 2026-01-01 --end 2026-12-31
 ```
 
+Shortcut for a full year:
+
+```bash
+uv run journal-verifier path/to/journal.md --year 2026
+```
+
 Show all missing dates (no limit):
 
 ```bash

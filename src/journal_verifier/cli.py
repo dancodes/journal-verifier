@@ -7,7 +7,12 @@ import sys
 from datetime import date
 from pathlib import Path
 
-from .coverage import find_missing_dates, find_weekday_mismatches
+from .coverage import (
+    find_missing_dates,
+    find_weekday_mismatches,
+    missing_date_problems,
+    weekday_mismatch_problems,
+)
 from .parsing import parse_journal
 from .reporting import build_report, write_csv
 
@@ -65,6 +70,11 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--start", help="Start date (YYYY-MM-DD)")
     parser.add_argument("--end", help="End date (YYYY-MM-DD)")
     parser.add_argument(
+        "--year",
+        type=int,
+        help="Shortcut for --start/--end for a full year (e.g. 2026)",
+    )
+    parser.add_argument(
         "--missing-limit",
         type=int,
         default=20,
@@ -82,8 +92,12 @@ def _resolve_range(
     args: argparse.Namespace,
     parser: argparse.ArgumentParser,
 ) -> tuple[date | None, date | None]:
+    if args.year and (args.start or args.end):
+        parser.error("--year cannot be used with --start or --end")
     if (args.start and not args.end) or (args.end and not args.start):
         parser.error("--start and --end must be provided together")
+    if args.year:
+        return date(args.year, 1, 1), date(args.year, 12, 31)
     if args.start and args.end:
         start_date = _parse_date_arg(args.start, parser, "start")
         end_date = _parse_date_arg(args.end, parser, "end")
@@ -105,11 +119,24 @@ def main() -> int:
     start_date, end_date = _resolve_range(args, parser)
 
     lines = _load_lines(Path(args.path), parser)
-    entries, global_errors = parse_journal(lines, debug_weekday=args.debug_weekday)
+    entries, global_problems = parse_journal(lines, debug_weekday=args.debug_weekday)
     mismatches = find_weekday_mismatches(entries)
     missing_dates = find_missing_dates(entries, start_date, end_date)
 
-    report_lines = build_report(entries, global_errors, missing_dates, mismatches, args.missing_limit)
+    structural_problems = list(global_problems)
+    for entry in entries:
+        structural_problems.extend(entry.problems)
+
+    coverage_problems = weekday_mismatch_problems(mismatches)
+    coverage_problems.extend(missing_date_problems(missing_dates, args.missing_limit))
+
+    report_lines = build_report(
+        structural_problems,
+        coverage_problems,
+        missing_dates,
+        mismatches,
+        args.missing_limit,
+    )
     _write_lines(report_lines, args.report, sys.stderr)
     _write_csv_output(entries, args.csv)
     return 0

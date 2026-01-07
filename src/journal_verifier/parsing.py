@@ -32,6 +32,23 @@ def _has_bullet(lines: list[str]) -> bool:
     return any(BULLET_RE.match(line) for line in lines)
 
 
+def _add_problem(
+    entry: Entry,
+    code: str,
+    message: str,
+    line_no: int | None,
+    context: dict[str, str] | None = None,
+) -> None:
+    entry.problems.append(
+        Problem(
+            code=code,
+            message=message,
+            line_no=line_no,
+            context=context or {},
+        )
+    )
+
+
 def _collect_headings(block: list[str]) -> list[tuple[int, str, str]]:
     headings: list[tuple[int, str, str]] = []
     for idx, line in enumerate(block):
@@ -40,6 +57,79 @@ def _collect_headings(block: list[str]) -> list[tuple[int, str, str]]:
             level, title = match.groups()
             headings.append((idx, level, title.strip()))
     return headings
+
+
+def _unexpected_heading_problem(entry: Entry, title: str, line_no: int) -> None:
+    _add_problem(
+        entry,
+        ProblemCode.UNEXPECTED_HEADING,
+        f"unexpected heading '{title}'",
+        line_no,
+        {"heading_title": title},
+    )
+
+
+def _heading_level_problem(entry: Entry, title: str, expected: str, found: str, line_no: int) -> None:
+    _add_problem(
+        entry,
+        ProblemCode.HEADING_LEVEL,
+        f"heading '{title}' should be level {expected}",
+        line_no,
+        {
+            "heading_title": title,
+            "expected_level": expected,
+            "found_level": found,
+        },
+    )
+
+
+def _duplicate_heading_problem(entry: Entry, title: str, line_no: int) -> None:
+    _add_problem(
+        entry,
+        ProblemCode.DUPLICATE_HEADING,
+        f"duplicate heading '{title}'",
+        line_no,
+        {"heading_title": title},
+    )
+
+
+def _heading_order_problem(entry: Entry, title: str, line_no: int) -> None:
+    _add_problem(
+        entry,
+        ProblemCode.HEADING_ORDER,
+        f"heading '{title}' is out of order",
+        line_no,
+        {"heading_title": title},
+    )
+
+
+def _process_heading(
+    entry: Entry,
+    rel_idx: int,
+    level: str,
+    title: str,
+    offset: int,
+    seen_titles: set[str],
+    expected_pos: int,
+) -> tuple[bool, int]:
+    line_no = offset + rel_idx + 1
+    if title not in EXPECTED_LEVEL:
+        _unexpected_heading_problem(entry, title, line_no)
+        return False, expected_pos
+
+    expected_level = EXPECTED_LEVEL[title]
+    if level != expected_level:
+        _heading_level_problem(entry, title, expected_level, level, line_no)
+
+    if title in seen_titles:
+        _duplicate_heading_problem(entry, title, line_no)
+
+    seen_titles.add(title)
+    section_index = EXPECTED_INDEX[title]
+    if section_index < expected_pos:
+        _heading_order_problem(entry, title, line_no)
+    next_expected = max(expected_pos, section_index + 1)
+    return True, next_expected
 
 
 def _validate_headings(
@@ -52,20 +142,17 @@ def _validate_headings(
     filtered: list[tuple[int, str, str]] = []
 
     for rel_idx, level, title in headings:
-        line_no = offset + rel_idx + 1
-        if title not in EXPECTED_LEVEL:
-            entry.errors.append((line_no, f"unexpected heading '{title}'"))
-            continue
-        filtered.append((rel_idx, level, title))
-        if level != EXPECTED_LEVEL[title]:
-            entry.errors.append((line_no, f"heading '{title}' should be level {EXPECTED_LEVEL[title]}"))
-        if title in seen_titles:
-            entry.errors.append((line_no, f"duplicate heading '{title}'"))
-        seen_titles.add(title)
-        section_index = EXPECTED_INDEX[title]
-        if section_index < expected_pos:
-            entry.errors.append((line_no, f"heading '{title}' is out of order"))
-        expected_pos = max(expected_pos, section_index + 1)
+        is_expected, expected_pos = _process_heading(
+            entry,
+            rel_idx,
+            level,
+            title,
+            offset,
+            seen_titles,
+            expected_pos,
+        )
+        if is_expected:
+            filtered.append((rel_idx, level, title))
 
     return seen_titles, filtered
 
@@ -111,16 +198,40 @@ def _record_sections(
 
 def _validate_looking_forward(entry: Entry, section: SectionInfo, content: list[str]) -> None:
     if not any(SHORT_TERM_RE.match(line) for line in content):
-        entry.errors.append((section.line_no, "missing 'Short-term' item in 'What I'm looking forward to'"))
+        _add_problem(
+            entry,
+            ProblemCode.MISSING_SHORT_TERM,
+            "missing 'Short-term' item in 'What I'm looking forward to'",
+            section.line_no,
+            {"section_title": section.title},
+        )
     if not any(LONG_TERM_RE.match(line) for line in content):
-        entry.errors.append((section.line_no, "missing 'Long-term' item in 'What I'm looking forward to'"))
+        _add_problem(
+            entry,
+            ProblemCode.MISSING_LONG_TERM,
+            "missing 'Long-term' item in 'What I'm looking forward to'",
+            section.line_no,
+            {"section_title": section.title},
+        )
 
 
 def _validate_signals(entry: Entry, section: SectionInfo, content: list[str]) -> None:
     if not any(HELPED_RE.match(line) for line in content):
-        entry.errors.append((section.line_no, "missing 'Helped today' item in 'Signals'"))
+        _add_problem(
+            entry,
+            ProblemCode.MISSING_HELPED,
+            "missing 'Helped today' item in 'Signals'",
+            section.line_no,
+            {"section_title": section.title},
+        )
     if not any(HURT_RE.match(line) for line in content):
-        entry.errors.append((section.line_no, "missing 'Hurt today' item in 'Signals'"))
+        _add_problem(
+            entry,
+            ProblemCode.MISSING_HURT,
+            "missing 'Hurt today' item in 'Signals'",
+            section.line_no,
+            {"section_title": section.title},
+        )
 
 
 def _validate_score_line(entry: Entry, section: SectionInfo, line: str) -> None:
@@ -133,16 +244,34 @@ def _validate_score_line(entry: Entry, section: SectionInfo, line: str) -> None:
     try:
         score_val = int(raw_score)
     except ValueError:
-        entry.errors.append((section.line_no, "invalid score value in 'Final score (1/5)'"))
+        _add_problem(
+            entry,
+            ProblemCode.INVALID_SCORE,
+            "invalid score value in 'Final score (1/5)'",
+            section.line_no,
+            {"score": raw_score},
+        )
         return
     if not 0 <= score_val <= 5:
-        entry.errors.append((section.line_no, "score must be between 0 and 5"))
+        _add_problem(
+            entry,
+            ProblemCode.SCORE_OUT_OF_RANGE,
+            "score must be between 0 and 5",
+            section.line_no,
+            {"score": str(score_val)},
+        )
 
 
 def _validate_score(entry: Entry, section: SectionInfo, content: list[str]) -> None:
     score_lines = [line for line in content if SCORE_RE.match(line)]
     if not score_lines:
-        entry.errors.append((section.line_no, "missing score entry in 'Final score (1/5)'"))
+        _add_problem(
+            entry,
+            ProblemCode.MISSING_SCORE,
+            "missing score entry in 'Final score (1/5)'",
+            section.line_no,
+            {"section_title": section.title},
+        )
         return
     for line in score_lines:
         _validate_score_line(entry, section, line)
@@ -152,7 +281,13 @@ def _validate_section_content(entry: Entry) -> None:
     for title, section in entry.sections.items():
         content = _content_lines(section.content_lines)
         if title in BULLET_REQUIRED and not _has_bullet(content):
-            entry.errors.append((section.line_no, f"section '{title}' has no list items"))
+            _add_problem(
+                entry,
+                ProblemCode.MISSING_BULLET,
+                f"section '{title}' has no list items",
+                section.line_no,
+                {"section_title": title},
+            )
         if title == "What I'm looking forward to":
             _validate_looking_forward(entry, section, content)
         elif title == "Signals":
@@ -206,17 +341,35 @@ def _parse_entry_header(entry: Entry, debug_weekday: bool) -> None:
     try:
         entry.date = date.fromisoformat(entry.date_str)
     except ValueError:
-        entry.errors.append((entry.line_no, f"invalid date '{entry.date_str}'"))
+        _add_problem(
+            entry,
+            ProblemCode.INVALID_DATE,
+            f"invalid date '{entry.date_str}'",
+            entry.line_no,
+            {"date": entry.date_str},
+        )
 
     weekday_name = _extract_weekday(entry.weekday_header)
     entry.weekday_name = None
     if weekday_name is None:
-        entry.errors.append((entry.line_no, _weekday_error(entry.weekday_header, debug_weekday)))
+        _add_problem(
+            entry,
+            ProblemCode.INVALID_WEEKDAY,
+            _weekday_error(entry.weekday_header, debug_weekday),
+            entry.line_no,
+            {"weekday_header": entry.weekday_header},
+        )
         return
 
     weekday_key = weekday_name.lower()
     if weekday_key not in VALID_WEEKDAYS:
-        entry.errors.append((entry.line_no, _weekday_error(entry.weekday_header, debug_weekday)))
+        _add_problem(
+            entry,
+            ProblemCode.INVALID_WEEKDAY,
+            _weekday_error(entry.weekday_header, debug_weekday),
+            entry.line_no,
+            {"weekday_header": entry.weekday_header},
+        )
         return
     entry.weekday_name = VALID_WEEKDAYS[weekday_key]
 
@@ -253,31 +406,46 @@ def _build_entries(
     return entries
 
 
-def _duplicate_date_errors(entries: list[Entry]) -> list[tuple[int, str]]:
+def _duplicate_date_problems(entries: list[Entry]) -> list[Problem]:
     seen_dates: dict[date, int] = {}
-    errors: list[tuple[int, str]] = []
+    problems: list[Problem] = []
     for entry in entries:
         if entry.date is None:
             continue
         if entry.date in seen_dates:
-            errors.append(
-                (
-                    entry.line_no,
-                    f"duplicate date '{entry.date.isoformat()}' (first at line {seen_dates[entry.date]})",
+            problems.append(
+                Problem(
+                    code=ProblemCode.DUPLICATE_DATE,
+                    message=(
+                        f"duplicate date '{entry.date.isoformat()}' "
+                        f"(first at line {seen_dates[entry.date]})"
+                    ),
+                    line_no=entry.line_no,
+                    context={
+                        "date": entry.date.isoformat(),
+                        "first_line": str(seen_dates[entry.date]),
+                    },
                 )
             )
         else:
             seen_dates[entry.date] = entry.line_no
-    return errors
+    return problems
 
 
 def parse_journal(
     lines: list[str],
     debug_weekday: bool = False,
-) -> tuple[list[Entry], list[tuple[int, str]]]:
+) -> tuple[list[Entry], list[Problem]]:
     headers = _find_headers(lines)
     if not headers:
-        return [], [(0, "no day headers found")]
+        return [], [
+            Problem(
+                code=ProblemCode.NO_HEADERS,
+                message="no day headers found",
+                line_no=None,
+                context={},
+            )
+        ]
     entries = _build_entries(lines, headers, debug_weekday)
-    errors = _duplicate_date_errors(entries)
-    return entries, errors
+    problems = _duplicate_date_problems(entries)
+    return entries, problems
