@@ -15,6 +15,19 @@ Run with uv (report goes to stderr by default; CSV is disabled unless requested)
 uv run journal-verifier path/to/journal.md
 ```
 
+CLI options:
+
+- `path` (positional): path to the journal markdown file
+- `--csv`: CSV output path (default: no CSV output; use `-` for stdout)
+- `--report`: report output path (default: stderr; use `-` for stdout)
+- `--start`: start date (YYYY-MM-DD)
+- `--end`: end date (YYYY-MM-DD)
+- `--year`: shortcut for `--start`/`--end` for a full year (e.g. 2026)
+- `--missing-limit`: max missing dates to list per range (0 = all)
+- `--debug-weekday`: include weekday debug details for invalid headers
+- `--fix`: apply autofixes for supported problems
+- `--fix-dry-run`: show autofix summary without writing changes
+
 Write CSV and report to files:
 
 ```bash
