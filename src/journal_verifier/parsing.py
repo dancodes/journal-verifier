@@ -346,24 +346,15 @@ def _extract_weekday(weekday_header: str) -> str | None:
     return match.group(1).strip()
 
 
-def _weekday_debug_details(weekday_header: str) -> str:
-    escaped = weekday_header.encode("unicode_escape").decode("ascii")
-    codepoints = " ".join(f"U+{ord(ch):04X}" for ch in weekday_header)
-    return f"raw={escaped}, len={len(weekday_header)}, codepoints={codepoints}"
-
-
-def _weekday_error(weekday_header: str, debug_weekday: bool) -> str:
+def _weekday_error(weekday_header: str) -> str:
     allowed = "Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday"
-    message = (
+    return (
         f"invalid weekday header '{weekday_header}': "
         f"must start with one of {allowed} (extra text allowed after the weekday)"
     )
-    if not debug_weekday:
-        return message
-    return f"{message} [debug: {_weekday_debug_details(weekday_header)}]"
 
 
-def _parse_entry_header(entry: Entry, debug_weekday: bool) -> None:
+def _parse_entry_header(entry: Entry) -> None:
     try:
         entry.date = date.fromisoformat(entry.date_str)
     except ValueError:
@@ -381,7 +372,7 @@ def _parse_entry_header(entry: Entry, debug_weekday: bool) -> None:
         _add_problem(
             entry,
             ProblemCode.INVALID_WEEKDAY,
-            _weekday_error(entry.weekday_header, debug_weekday),
+            _weekday_error(entry.weekday_header),
             entry.line_no,
             {"weekday_header": entry.weekday_header},
         )
@@ -392,7 +383,7 @@ def _parse_entry_header(entry: Entry, debug_weekday: bool) -> None:
         _add_problem(
             entry,
             ProblemCode.INVALID_WEEKDAY,
-            _weekday_error(entry.weekday_header, debug_weekday),
+            _weekday_error(entry.weekday_header),
             entry.line_no,
             {"weekday_header": entry.weekday_header},
         )
@@ -404,7 +395,6 @@ def _build_entry(
     lines: list[str],
     header: tuple[int, str, str],
     end: int,
-    debug_weekday: bool,
 ) -> Entry:
     line_idx, date_str, weekday_header = header
     entry = Entry(
@@ -414,7 +404,7 @@ def _build_entry(
         weekday_name=None,
         line_no=line_idx + 1,
     )
-    _parse_entry_header(entry, debug_weekday)
+    _parse_entry_header(entry)
     block = lines[line_idx + 1 : end]
     _parse_entry_sections(entry, block, line_idx + 1)
     return entry
@@ -423,12 +413,11 @@ def _build_entry(
 def _build_entries(
     lines: list[str],
     headers: list[tuple[int, str, str]],
-    debug_weekday: bool,
 ) -> list[Entry]:
     entries: list[Entry] = []
     for idx, header in enumerate(headers):
         end = headers[idx + 1][0] if idx + 1 < len(headers) else len(lines)
-        entries.append(_build_entry(lines, header, end, debug_weekday))
+        entries.append(_build_entry(lines, header, end))
     return entries
 
 
@@ -460,7 +449,6 @@ def _duplicate_date_problems(entries: list[Entry]) -> list[Problem]:
 
 def parse_journal(
     lines: list[str],
-    debug_weekday: bool = False,
 ) -> tuple[list[Entry], list[Problem]]:
     headers = _find_headers(lines)
     if not headers:
@@ -472,6 +460,6 @@ def parse_journal(
                 context={},
             )
         ]
-    entries = _build_entries(lines, headers, debug_weekday)
+    entries = _build_entries(lines, headers)
     problems = _duplicate_date_problems(entries)
     return entries, problems

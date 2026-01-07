@@ -86,11 +86,6 @@ def _add_range_flags(parser: argparse.ArgumentParser) -> None:
 
 def _add_fix_flags(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
-        "--debug-weekday",
-        action="store_true",
-        help="Include weekday debug details for invalid headers",
-    )
-    parser.add_argument(
         "--fix",
         action="store_true",
         help="Apply autofixes for supported problems",
@@ -160,7 +155,7 @@ def _collect_problem_sets(
 
 
 def _parse_and_collect(lines, args, start_date, end_date):
-    entries, global_problems = parse_journal(lines, debug_weekday=args.debug_weekday)
+    entries, global_problems = parse_journal(lines)
     mismatches = find_weekday_mismatches(entries)
     missing_dates = find_missing_dates(entries, start_date, end_date)
     structural, coverage, coverage_all_missing = _collect_problem_sets(
