@@ -178,9 +178,10 @@ def _maybe_apply_fixes(path: Path, args, lines, structural, coverage, start_date
         return lines, [], None
     fix_report = apply_fixes(lines, structural + coverage)
     fix_lines = fix_report_lines(fix_report.results)
+    if args.fix_dry_run:
+        return lines, fix_lines, None
     lines = fix_report.lines
-    if args.fix:
-        path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     updated = _parse_and_collect(lines, args, start_date, end_date)
     return lines, fix_lines, updated
 
