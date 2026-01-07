@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+from datetime import date
+
 from .constants import (
     DAY_HEADER_RE,
     EXPECTED_INDEX,
     EXPECTED_LEVEL,
+    EXPECTED_SECTIONS,
     HEADING_RE,
     SECTION_TEMPLATES,
 )
@@ -16,6 +19,56 @@ from .problems import Problem
 def _entry_end_index(lines: list[str], start_idx: int) -> int:
     for idx in range(start_idx + 1, len(lines)):
         if DAY_HEADER_RE.match(lines[idx]):
+            return idx
+    return len(lines)
+
+
+def _entry_header_line(day: date) -> str:
+    weekday = day.strftime("%A")
+    return f"## {day.isoformat()} ({weekday})"
+
+
+def _entry_template_lines(day: date) -> list[str]:
+    lines = [_entry_header_line(day), ""]
+    for level, title in EXPECTED_SECTIONS:
+        lines.append(f"{level} {title}")
+        lines.extend(SECTION_TEMPLATES.get(title, []))
+        lines.append("")
+    lines.append("---")
+    return lines
+
+
+def _insert_entry_lines(lines: list[str], insert_at: int, entry_lines: list[str]) -> None:
+    before = insert_at > 0 and lines[insert_at - 1].strip() != ""
+    after = insert_at < len(lines) and lines[insert_at].strip() != ""
+    payload = list(entry_lines)
+    if before:
+        payload.insert(0, "")
+    if after:
+        payload.append("")
+    lines[insert_at:insert_at] = payload
+
+
+def _extract_entry_dates(lines: list[str]) -> list[tuple[int, date]]:
+    entries: list[tuple[int, date]] = []
+    for idx, line in enumerate(lines):
+        match = DAY_HEADER_RE.match(line)
+        if not match:
+            continue
+        try:
+            entries.append((idx, date.fromisoformat(match.group(1))))
+        except ValueError:
+            continue
+    return entries
+
+
+def _insert_index_for_date(lines: list[str], day: date) -> int:
+    entries = _extract_entry_dates(lines)
+    if not entries:
+        return len(lines)
+    entries.sort(key=lambda item: item[1])
+    for idx, entry_date in entries:
+        if day < entry_date:
             return idx
     return len(lines)
 
@@ -103,3 +156,17 @@ def fix_missing_section(context: FixContext, problem: Problem) -> FixResult:
     block[insert_at:insert_at] = _section_lines(block, insert_at, title)
     context.lines[start_idx + 1 : end_idx] = block
     return FixResult(problem, True, f"inserted '{title}' section")
+
+
+def fix_missing_date(context: FixContext, problem: Problem) -> FixResult:
+    date_str = problem.context.get("date")
+    if not date_str:
+        return FixResult(problem, False, "missing date metadata")
+    try:
+        day = date.fromisoformat(date_str)
+    except ValueError:
+        return FixResult(problem, False, f"invalid date '{date_str}'")
+    insert_at = _insert_index_for_date(context.lines, day)
+    entry_lines = _entry_template_lines(day)
+    _insert_entry_lines(context.lines, insert_at, entry_lines)
+    return FixResult(problem, True, f"inserted day {date_str}")

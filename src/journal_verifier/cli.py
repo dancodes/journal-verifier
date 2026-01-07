@@ -148,27 +148,29 @@ def _collect_problem_sets(
     mismatches,
     missing_dates,
     missing_limit: int,
-) -> tuple[list, list]:
+) -> tuple[list, list, list]:
     structural = list(global_problems)
     for entry in entries:
         structural.extend(entry.problems)
     coverage = weekday_mismatch_problems(mismatches)
     coverage.extend(missing_date_problems(missing_dates, missing_limit))
-    return structural, coverage
+    coverage_all_missing = weekday_mismatch_problems(mismatches)
+    coverage_all_missing.extend(missing_date_problems(missing_dates, 0))
+    return structural, coverage, coverage_all_missing
 
 
 def _parse_and_collect(lines, args, start_date, end_date):
     entries, global_problems = parse_journal(lines, debug_weekday=args.debug_weekday)
     mismatches = find_weekday_mismatches(entries)
     missing_dates = find_missing_dates(entries, start_date, end_date)
-    structural, coverage = _collect_problem_sets(
+    structural, coverage, coverage_all_missing = _collect_problem_sets(
         entries,
         global_problems,
         mismatches,
         missing_dates,
         args.missing_limit,
     )
-    return entries, structural, coverage, mismatches, missing_dates
+    return entries, structural, coverage, coverage_all_missing, mismatches, missing_dates
 
 
 def _maybe_apply_fixes(path: Path, args, lines, structural, coverage, start_date, end_date):
@@ -206,7 +208,7 @@ def _execute(args, parser: argparse.ArgumentParser):
     start_date, end_date = _resolve_range(args, parser)
     path = Path(args.path)
     lines = _load_lines(path, parser)
-    entries, structural, coverage, mismatches, missing_dates = _parse_and_collect(
+    entries, structural, coverage, coverage_all_missing, mismatches, missing_dates = _parse_and_collect(
         lines,
         args,
         start_date,
@@ -217,12 +219,12 @@ def _execute(args, parser: argparse.ArgumentParser):
         args,
         lines,
         structural,
-        coverage,
+        coverage_all_missing,
         start_date,
         end_date,
     )
     if updated is not None:
-        entries, structural, coverage, mismatches, missing_dates = updated
+        entries, structural, coverage, coverage_all_missing, mismatches, missing_dates = updated
     report_lines = _report_lines(
         structural,
         coverage,

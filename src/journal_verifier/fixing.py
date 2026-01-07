@@ -32,6 +32,10 @@ def _missing_section_key(problem: Problem) -> tuple[int, int]:
     return (-line_no, EXPECTED_INDEX.get(title, 999))
 
 
+def _missing_date_key(problem: Problem) -> str:
+    return problem.context.get("date", "")
+
+
 def _apply_fix(context: FixContext, problem: Problem, solution) -> FixResult:
     return solution.apply_fix(context, problem)
 
@@ -43,6 +47,11 @@ def apply_fixes(lines: list[str], problems: list[Problem]) -> FixReport:
 
     missing = [(problem, solution) for problem, solution in fixable if problem.code == ProblemCode.MISSING_SECTION]
     for problem, solution in sorted(missing, key=lambda item: _missing_section_key(item[0])):
+        results.append(_apply_fix(context, problem, solution))
+
+    missing_dates = [(problem, solution) for problem, solution in fixable if problem.code == ProblemCode.MISSING_DATE]
+    missing_dates.sort(key=lambda item: _missing_date_key(item[0]))
+    for problem, solution in missing_dates:
         results.append(_apply_fix(context, problem, solution))
 
     return FixReport(lines=context.lines, results=results)

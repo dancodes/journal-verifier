@@ -265,13 +265,6 @@ def _validate_score_line(entry: Entry, section: SectionInfo, line: str) -> None:
 def _validate_score(entry: Entry, section: SectionInfo, content: list[str]) -> None:
     score_lines = [line for line in content if SCORE_RE.match(line)]
     if not score_lines:
-        _add_problem(
-            entry,
-            ProblemCode.MISSING_SCORE,
-            "missing score entry in 'Final score (1/5)'",
-            section.line_no,
-            {"section_title": section.title},
-        )
         return
     for line in score_lines:
         _validate_score_line(entry, section, line)

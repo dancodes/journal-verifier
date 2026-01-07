@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable
 
-from .autofix import fix_missing_section
+from .autofix import fix_missing_date, fix_missing_section
 from .fix_models import FixContext, FixResult
 from .problems import Problem, ProblemCode
 
@@ -137,7 +137,13 @@ SOLUTIONS = [
     Solution(ProblemCode.INVALID_SCORE, "Fix score format", _invalid_score_hint),
     Solution(ProblemCode.SCORE_OUT_OF_RANGE, "Fix score range", _score_out_of_range_hint),
     Solution(ProblemCode.NO_HEADERS, "Add day headers", _no_headers_hint),
-    Solution(ProblemCode.MISSING_DATE, "Add missing date", _missing_date_hint),
+    Solution(
+        ProblemCode.MISSING_DATE,
+        "Add missing date",
+        _missing_date_hint,
+        auto_fixable=True,
+        apply_fix=fix_missing_date,
+    ),
     Solution(ProblemCode.WEEKDAY_MISMATCH, "Fix weekday mismatch", _weekday_mismatch_hint),
 ]
 

@@ -39,6 +39,12 @@ Autofix missing sections (preserves order):
 uv run journal-verifier path/to/journal.md --fix
 ```
 
+Autofix missing days too (same flag):
+
+```bash
+uv run journal-verifier path/to/journal.md --fix --year 2026
+```
+
 Preview autofix summary without writing:
 
 ```bash
