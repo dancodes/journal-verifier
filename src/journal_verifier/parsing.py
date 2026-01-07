@@ -32,6 +32,27 @@ def _has_bullet(lines: list[str]) -> bool:
     return any(BULLET_RE.match(line) for line in lines)
 
 
+def _has_meaningful_content(lines: list[str]) -> bool:
+    for line in lines:
+        if not line.strip():
+            continue
+        match = BULLET_RE.match(line)
+        if match:
+            if match.group(1).strip():
+                return True
+            continue
+        return True
+    return False
+
+
+def _entry_has_main_content(entry: Entry) -> bool:
+    section = entry.sections.get("What happened today")
+    if not section:
+        return False
+    content = _content_lines(section.content_lines)
+    return _has_meaningful_content(content)
+
+
 def _add_problem(
     entry: Entry,
     code: str,
@@ -242,7 +263,7 @@ def _validate_score_line(entry: Entry, section: SectionInfo, line: str) -> None:
     if raw_score is None:
         return
     try:
-        score_val = int(raw_score)
+        score_val = float(raw_score)
     except ValueError:
         _add_problem(
             entry,
@@ -258,16 +279,28 @@ def _validate_score_line(entry: Entry, section: SectionInfo, line: str) -> None:
             ProblemCode.SCORE_OUT_OF_RANGE,
             "score must be between 0 and 5",
             section.line_no,
-            {"score": str(score_val)},
+            {"score": raw_score},
         )
 
 
 def _validate_score(entry: Entry, section: SectionInfo, content: list[str]) -> None:
-    score_lines = [line for line in content if SCORE_RE.match(line)]
-    if not score_lines:
+    actual_scores = []
+    for line in content:
+        match = SCORE_RE.match(line)
+        if match and match.group(1) is not None:
+            actual_scores.append(line)
+    if actual_scores:
+        for line in actual_scores:
+            _validate_score_line(entry, section, line)
         return
-    for line in score_lines:
-        _validate_score_line(entry, section, line)
+    if _entry_has_main_content(entry):
+        _add_problem(
+            entry,
+            ProblemCode.MISSING_SCORE,
+            "missing score entry in 'Final score (1/5)'",
+            section.line_no,
+            {"section_title": section.title},
+        )
 
 
 def _validate_section_content(entry: Entry) -> None:

@@ -7,7 +7,7 @@ import re
 DAY_HEADER_RE = re.compile(r"^## (\d{4}-\d{2}-\d{2}) \(([^)]+)\)\s*$")
 HEADING_RE = re.compile(r"^(#{2,3}) (.+?)\s*$")
 BULLET_RE = re.compile(r"^\s*-\s*(.*)$")
-SCORE_RE = re.compile(r"^\s*-\s*(\d+)?\s*/\s*5\s*$")
+SCORE_RE = re.compile(r"^\s*-\s*(\d+(?:\.\d+)?)?\s*/\s*5\s*$")
 
 UP_ARROW = "\u2b06"
 DOWN_ARROW = "\u2b07"
