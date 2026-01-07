@@ -33,6 +33,18 @@ Shortcut for a full year:
 uv run journal-verifier path/to/journal.md --year 2026
 ```
 
+Autofix missing sections (preserves order):
+
+```bash
+uv run journal-verifier path/to/journal.md --fix
+```
+
+Preview autofix summary without writing:
+
+```bash
+uv run journal-verifier path/to/journal.md --fix-dry-run
+```
+
 Show all missing dates (no limit):
 
 ```bash

@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable
 
+from .autofix import fix_missing_section
+from .fix_models import FixContext, FixResult
 from .problems import Problem, ProblemCode
 
 
@@ -14,6 +16,7 @@ class Solution:
     title: str
     hint: Callable[[Problem], str]
     auto_fixable: bool = False
+    apply_fix: Callable[[FixContext, Problem], FixResult] | None = None
 
 
 def _ctx(problem: Problem, key: str, default: str) -> str:
@@ -111,7 +114,13 @@ def _weekday_mismatch_hint(problem: Problem) -> str:
 
 
 SOLUTIONS = [
-    Solution(ProblemCode.MISSING_SECTION, "Add missing section heading", _missing_section_hint),
+    Solution(
+        ProblemCode.MISSING_SECTION,
+        "Add missing section heading",
+        _missing_section_hint,
+        auto_fixable=True,
+        apply_fix=fix_missing_section,
+    ),
     Solution(ProblemCode.UNEXPECTED_HEADING, "Remove unexpected heading", _unexpected_heading_hint),
     Solution(ProblemCode.HEADING_LEVEL, "Fix heading level", _heading_level_hint),
     Solution(ProblemCode.DUPLICATE_HEADING, "Remove duplicate heading", _duplicate_heading_hint),

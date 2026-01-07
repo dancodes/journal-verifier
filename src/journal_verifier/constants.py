@@ -49,3 +49,12 @@ BULLET_REQUIRED = {
     "What I'm grateful for",
     "One adjustment (tomorrow)",
 }
+
+SECTION_TEMPLATES = {
+    "What happened today": ["- ", "- ", "- ", "- "],
+    "What I'm grateful for": ["- ", "- ", "- "],
+    "What I'm looking forward to": ["- Short-term: ", "- Long-term: "],
+    "Signals": ["- ⬆️ Helped today:", "- ⬇️ Hurt today:"],
+    "One adjustment (tomorrow)": ["- "],
+    "Final score (1/5)": ["- /5"],
+}
