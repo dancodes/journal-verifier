@@ -21,6 +21,7 @@ from .constants import (
     WEEKDAY_PREFIX_RE,
 )
 from .models import Entry, SectionInfo
+from .problems import Problem, ProblemCode
 
 
 def _content_lines(lines: list[str]) -> list[str]:
@@ -72,7 +73,21 @@ def _validate_headings(
 def _check_missing_sections(entry: Entry, seen_titles: set[str]) -> None:
     for title in EXPECTED_TITLES:
         if title not in seen_titles:
-            entry.errors.append((entry.line_no, f"missing section '{title}'"))
+            entry.problems.append(_missing_section_problem(entry, title))
+
+
+def _missing_section_problem(entry: Entry, title: str) -> Problem:
+    context = {
+        "section_title": title,
+        "date": entry.date_str,
+        "weekday_header": entry.weekday_header,
+    }
+    return Problem(
+        code=ProblemCode.MISSING_SECTION,
+        message=f"missing section '{title}'",
+        line_no=entry.line_no,
+        context=context,
+    )
 
 
 def _record_sections(

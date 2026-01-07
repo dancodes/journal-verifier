@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import date
 
+from .problems import Problem
 
 @dataclass
 class SectionInfo:
@@ -22,4 +23,5 @@ class Entry:
     weekday_name: str | None
     line_no: int
     sections: dict[str, SectionInfo] = field(default_factory=dict)
+    problems: list[Problem] = field(default_factory=list)
     errors: list[tuple[int, str]] = field(default_factory=list)

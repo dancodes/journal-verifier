@@ -7,6 +7,8 @@ from datetime import date
 
 from .constants import EXPECTED_TITLES
 from .models import Entry
+from .problems import Problem
+from .solutions import solution_hint
 
 
 def _format_missing_dates(dates: list[date], limit: int) -> str:
@@ -29,12 +31,32 @@ def _collect_errors(
     return all_errors
 
 
-def _syntax_report_lines(all_errors: list[tuple[int, str]]) -> list[str]:
-    if not all_errors:
+def _collect_problems(entries: list[Entry]) -> list[Problem]:
+    problems: list[Problem] = []
+    for entry in entries:
+        problems.extend(entry.problems)
+    return problems
+
+
+def _problem_items(problems: list[Problem]) -> list[tuple[int, str]]:
+    items: list[tuple[int, str]] = []
+    for problem in problems:
+        line_no = problem.line_no or 0
+        items.append((line_no, problem.message))
+    return items
+
+
+def _syntax_report_lines(
+    all_errors: list[tuple[int, str]],
+    problems: list[Problem],
+) -> list[str]:
+    items = list(all_errors)
+    items.extend(_problem_items(problems))
+    if not items:
         return ["Syntax errors: none"]
 
     report_lines = ["Syntax errors:"]
-    for line_no, message in sorted(all_errors, key=lambda item: (item[0] == 0, item[0])):
+    for line_no, message in sorted(items, key=lambda item: (item[0] == 0, item[0])):
         prefix = f"- line {line_no}: " if line_no else "- "
         report_lines.append(f"{prefix}{message}")
     return report_lines
@@ -69,6 +91,18 @@ def _weekday_report_lines(mismatches: list[tuple[Entry, str]]) -> list[str]:
     return report_lines
 
 
+def _solution_report_lines(problems: list[Problem]) -> list[str]:
+    hints = []
+    for problem in problems:
+        hint = solution_hint(problem)
+        if hint:
+            label = f"- line {problem.line_no}: " if problem.line_no else "- "
+            hints.append(f"{label}{hint}")
+    if not hints:
+        return []
+    return ["Solutions:"] + hints
+
+
 def build_report(
     entries: list[Entry],
     global_errors: list[tuple[int, str]],
@@ -77,10 +111,12 @@ def build_report(
     missing_limit: int,
 ) -> list[str]:
     all_errors = _collect_errors(entries, global_errors)
+    problems = _collect_problems(entries)
     report_lines: list[str] = []
-    report_lines.extend(_syntax_report_lines(all_errors))
+    report_lines.extend(_syntax_report_lines(all_errors, problems))
     report_lines.extend(_missing_report_lines(missing_dates, missing_limit))
     report_lines.extend(_weekday_report_lines(mismatches))
+    report_lines.extend(_solution_report_lines(problems))
     return report_lines
 
 
